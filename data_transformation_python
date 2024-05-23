@@ -1,4 +1,6 @@
-Project_london_bikes done using Python in Google Colab
+Project_london_bikes 
+
+data manipulation and transformation using Python in Google Colab
 
 import pandas as pd
 
