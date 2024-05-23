@@ -1,0 +1,75 @@
+Project_london_bikes done using Python in Google Colab
+
+import pandas as pd
+
+import zipfile
+
+zipfile_name = 'london_bike_sharing_dataset_kaggle.zip'
+with zipfile.ZipFile(zipfile_name, 'r') as file:
+  file.extractall()
+
+bikes = pd.read_csv("london_merged.csv")
+
+# exploring the data
+bikes.info()
+
+bikes.shape
+
+bikes
+
+bikes.weather_code.value_counts()
+
+bikes.season.value_counts()
+
+# renaming the columns
+new_columns_names_dict = {'timestamp' : 'time',
+                          'cnt' : 'count',
+                          't1' : 'temp_real_C',
+                          't2' : 'temp_feels_like_C',
+                          'hum' : 'humidity_percent',
+                          'wind_speed' : 'wind_speed_kph',
+                          'weather_code' : 'weather',
+                          'is_holiday' : 'is_holiday',
+                          'is_weekend' : 'is_weekend',
+                          'season' : 'season'
+}
+
+bikes.rename(new_columns_names_dict, axis=1, inplace=True)
+
+# changing the humidity values to percentage
+bikes.humidity_percent = bikes.humidity_percent/100
+
+# creating a dictionary to map the seasons numbers to their names
+season_dict = {
+    '0.0' : 'spring',
+    '1.0' : 'summer',
+    '2.0' : 'autumn',
+    '3.0' : 'winter'
+}
+
+# changing the season column data type to string
+bikes.season = bikes.season.astype('str')
+
+# mapping the values 0-3 to the actual written seasons
+bikes.season = bikes.season.map(season_dict)
+
+# doing the same thing for the weather column
+# (using the descriptions from the Kaggle page)
+weather_dict = {
+    '1.0' : 'Clear',
+    '2.0' : 'Scattered clouds',
+    '3.0' : 'Broken clouds',
+    '4.0' : 'Cloudy',
+    '7.0' : 'Rain',
+    '10.0' : 'Rain with thunderstorm',
+    '26.0' : 'Snowfall'
+}
+
+bikes.weather = bikes.weather.astype('str')
+
+bikes.weather = bikes.weather.map(weather_dict)
+
+bikes
+
+# exporting to excel file
+bikes.to_excel('london_bikes_final.xlsx')
